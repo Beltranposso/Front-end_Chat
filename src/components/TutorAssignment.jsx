@@ -100,7 +100,7 @@ export function TutorAssignment({ id,seitioId}) {
 
 
   
-  const enviarMensaje = () => {
+  const enviarMensaje =async () => {
     // Validación del mensaje
     if (!Mensaje.trim()) {
       console.warn("No se puede enviar un mensaje vacío.");
@@ -185,7 +185,7 @@ export function TutorAssignment({ id,seitioId}) {
   }, []);
 
   useEffect(() => {
-    console.log("Socket instance:", socket);
+
 
     const handleMensaje = (data) => {
         console.log("📩 Mensaje recibido:", data);
