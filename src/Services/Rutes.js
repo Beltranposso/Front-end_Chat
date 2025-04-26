@@ -28,3 +28,8 @@ export const URI_PULLASESOR = Ruta + "/chats/AssesorEntraAlchat/"
 /* ----------------Rutas post para el registro--------------------- */
 export const URI_REGISTRO = Ruta + "/usuarios/createUsers/sitio"
 /* ----------------------------------------------------------------- */
+
+
+/* -------------------Rutas post para los mensajes -----------------*/
+export const URI_POSTMENSAJE = Ruta + "/mensajes/createMensaje/"
+/*------------------------------------------------------------------ */
