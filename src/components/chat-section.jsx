@@ -43,6 +43,7 @@ export default function ChatSection({id, chatId, onBack, seitioId}) {
         messages: data.mensajes.map((msg) => ({
           sender: msg.enviado_por === 'cliente' ? 'client' : 'agent',
           content: msg.contenido,
+          Traduccion: msg.Traduccion ,
           timestamp: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }))
       }
@@ -177,12 +178,13 @@ console.log("Error al enviar el mensaje")
         setChats((prevChat) => {
           if (!prevChat) return prevChat;
           
-          console.log("🧠 Actualizando chats con nuevo mensaje", data);
+       
           
           // Adaptar el formato del mensaje recibido por socket al formato esperado por tu componente
           const nuevoMensaje = {
             sender: data.enviado_por === 'cliente' ? 'client' : 'agent',
             content: data.contenido,
+            Traduccion: data.Traduccion,
             timestamp: new Date(data.createdAt).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
@@ -248,7 +250,7 @@ console.log("Error al enviar el mensaje")
     return (
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-full">
-          <p>Chat no encontrado</p>
+          <p>Chat no encontrado </p>
         </CardContent>
       </Card>
     )
@@ -282,33 +284,33 @@ console.log("Error al enviar el mensaje")
           <div className="w-64 border-r p-3 flex flex-col space-y-3 overflow-y-auto">
             <div className="text-sm font-medium text-muted-foreground mb-2">Acciones</div>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <Ban size={16} className="mr-2" />
+            <Button variant="outline" size="sm" className="justify-start hover:bg-red-100 hover:text-red-600 transition-colors">
+              <Ban size={16} className="mr-2 text-red-500" />
               Bloquear usuario
             </Button>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <Ticket size={16} className="mr-2" />
+            <Button variant="outline" size="sm" className="justify-start hover:bg-blue-100 hover:text-blue-600 transition-colors">
+              <Ticket size={16} className="mr-2 text-blue-500" />
               Crear ticket
             </Button>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <Clock size={16} className="mr-2" />
+            <Button variant="outline" size="sm" className="justify-start hover:bg-purple-100 hover:text-purple-600 transition-colors">
+              <Clock size={16} className="mr-2 text-purple-500" />
               Historial
             </Button>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <UserX size={16} className="mr-2" />
-              Banear IP
+            <Button variant="outline" size="sm" className="justify-start hover:bg-orange-100 hover:text-orange-600 transition-colors">
+              <UserX size={16} className="mr-2 text-orange-500" />
+              Banear IP 
             </Button>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <FileText size={16} className="mr-2" />
+            <Button variant="outline" size="sm" className="justify-start hover:bg-green-100 hover:text-green-600 transition-colors">
+              <FileText size={16} className="mr-2 text-green-500" />
               Notas
             </Button>
 
-            <Button variant="outline" size="sm" className="justify-start">
-              <Printer size={16} className="mr-2" />
+            <Button variant="outline" size="sm" className="justify-start hover:bg-indigo-100 hover:text-indigo-600 transition-colors">
+              <Printer size={16} className="mr-2 text-indigo-500" />
               Imprimir chat
             </Button>
 
@@ -335,34 +337,67 @@ console.log("Error al enviar el mensaje")
         <div className="flex-grow flex flex-col h-[500px] overflow-hidden">
           <CardContent className="flex-grow overflow-y-auto p-4">
             <div className="space-y-4">
-              {chats.messages.map((message, index) => (
-                <div
-                key={index}
-                className={`flex ${message.sender === "agent" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`max-w-[80%] p-3 rounded-lg ${getMessageClass(message.sender)}`}>
-                    {message.sender === "system" ? (
-                      message.content.startsWith("http") ? (
-                        <a
-                        href={message.content}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline break-all"
-                        >
-                          {message.content}
-                        </a>
-                      ) : (
-                        <p>{message.content}</p>
-                      )
-                    ) : (
-                      <p>{message.content}</p>
-                    )}
-                    <p className={`text-xs mt-1 ${getMessageTextClass(message.sender)}`}>
-                      {formatTimestamp(message.timestamp)}
-                    </p>
-                  </div>
-                </div>
-              ))}
+{chats.messages.map((message, index) => (
+  <div
+    key={index}
+    className={`flex ${message.sender === "agent" ? "justify-end" : "justify-start"} mb-4`}
+  >
+    <div 
+      className={`
+        relative
+        max-w-[80%] 
+        p-4  
+        rounded-2xl
+        ${message.sender === "agent" 
+          ? "rounded-br-none bg-green-500 text-white shadow-lg" 
+          : "rounded-bl-none bg-purple-500 text-white shadow-md"
+        }
+        ${getMessageClass(message.sender)}
+      `}
+    >
+      {message.sender === "system" ? (
+        message.content.startsWith("http") ? (
+          <a
+            href={message.content}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline break-all transition-colors"
+          >
+            {message.content}
+          </a>
+        ) : (
+          <p className="text-base leading-relaxed">{message.content}</p>
+        )
+      ) : (
+        <>
+          <p className="text-base leading-relaxed">{message.content}</p>
+          
+          {/* Show translation only for client messages and if translation exists and is different from original */}
+          {message.sender === "client" && 
+           message.Traduccion && 
+           message.Traduccion !== null &&
+           message.Traduccion !== "Sin traducción" && 
+           message.Traduccion !== message.content && (
+            <div className="mt-2 pt-2 border-t border-white/20">
+              <p className="text-xs text-white/70 mb-1">Traducción:</p>
+              <p className="text-base leading-relaxed">{message.Traduccion}</p> 
+            </div>
+          )}
+        </>
+      )}
+      <p 
+        className={`
+          text-xs 
+          mt-2
+          opacity-75
+          ${message.sender === "agent" ? "text-white/70" : "text-white/70"}
+        `}
+      >
+        {formatTimestamp(message.timestamp)}
+      </p>
+    </div>
+  </div>
+))}
               <div ref={bottomRef} />
             </div>
           </CardContent>
