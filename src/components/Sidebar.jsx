@@ -290,7 +290,7 @@ useEffect(() => {
             </button>
           ))}
         </nav>
-      </div>
+      </div> 
 
       {/* Contenedor de nuevos chats para modo colapsado - Mejorado */}
       {isCollapsed && notifications.length > 0 && (
